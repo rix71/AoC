@@ -71,7 +71,7 @@ void part2(std::vector<report_t> const& reports) {
 
 int main() {
   using namespace std::literals;
-  auto lines = read_input("day2/in.txt");
+  auto lines = read_input("day02/in.txt");
 
   std::vector<report_t> reports;
   reports.reserve(lines.size());

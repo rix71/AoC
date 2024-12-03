@@ -78,7 +78,7 @@ void part2(std::string const& memory) {
 
 int main() {
   using namespace std::literals;
-  auto lines = read_input("day3/in.txt");
+  auto lines = read_input("day03/in.txt");
   auto flattened = lines | sv::join | sv::common;
   std::string memory(flattened.begin(), flattened.end());
 

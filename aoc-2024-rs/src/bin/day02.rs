@@ -35,7 +35,7 @@ fn is_safe(report: &[i32]) -> bool {
 }
 
 fn main() {
-    let input = include_str!("../../input/day2/in.txt");
+    let input = include_str!("../../input/day02/in.txt");
     // println!("input: {}", input);
     let reports: Vec<Vec<i32>> = input
         .lines()

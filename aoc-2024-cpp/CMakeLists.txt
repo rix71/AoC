@@ -17,6 +17,6 @@ link_libraries(fmt::fmt flux::flux)
 add_compile_options(-DBASE_PATH="${CMAKE_SOURCE_DIR}")
 
 # Solutions
-add_executable(day1 day1/day1.cpp)
-add_executable(day2 day2/day2.cpp)
-add_executable(day3 day3/day3.cpp)
+add_executable(day01 day01/day01.cpp)
+add_executable(day02 day02/day02.cpp)
+add_executable(day03 day03/day03.cpp)

@@ -17,7 +17,7 @@ fn part2(l1: Vec<i32>, l2: Vec<i32>) {
 }
 
 fn main() {
-    let input = include_str!("../../input/day1/test.txt");
+    let input = include_str!("../../input/day01/test.txt");
     let (l1, l2) = input
         .lines()
         .map(|line| {

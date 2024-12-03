@@ -70,7 +70,7 @@ void part2(std::vector<int> l1, std::vector<int> l2) {
 
 int main() {
   using namespace std::literals;
-  auto lines = read_input("day1/test.txt");
+  auto lines = read_input("day01/test.txt");
 
   auto l1 = std::vector<int>{};
   auto l2 = std::vector<int>{};

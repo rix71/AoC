@@ -38,7 +38,7 @@ fn part2(memory: &str) {
 }
 
 fn main() {
-    let input = include_str!("../../input/day3/in.txt");
+    let input = include_str!("../../input/day03/in.txt");
     // println!("{}", input);
     part1(input);
     part2(input);
