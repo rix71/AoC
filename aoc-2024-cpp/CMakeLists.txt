@@ -20,3 +20,11 @@ add_compile_options(-DBASE_PATH="${CMAKE_SOURCE_DIR}")
 add_executable(day01 day01/day01.cpp)
 add_executable(day02 day02/day02.cpp)
 add_executable(day03 day03/day03.cpp)
+add_executable(day04 day04/day04.cpp)
+
+# ----------------------------------------
+execute_process(
+  COMMAND ${CMAKE_COMMAND} -E create_symlink
+    ${CMAKE_BINARY_DIR}/compile_commands.json
+    ${CMAKE_SOURCE_DIR}/compile_commands.json
+)
