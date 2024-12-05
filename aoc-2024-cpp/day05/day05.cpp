@@ -39,10 +39,6 @@ auto read_input(fs::path const& file_name) -> std::vector<std::string> {
   return lines;
 }
 
-auto get_middle_page(update_t const& update) -> int {
-  return update[update.size() / 2];
-};
-
 auto is_correct_order(update_t const& update, rules_t const& rules) -> bool {
   for (auto [idx, page] : update | sv::enumerate) {
     if (!rules.contains(page)) {
@@ -52,10 +48,8 @@ auto is_correct_order(update_t const& update, rules_t const& rules) -> bool {
         continue;
       }
     }
-    // All the pages that must be BEFORE this page
-    auto page_rules = rules.at(page);
-    auto pages_before = update | sv::take(idx);
-    for (auto page_before : pages_before) {
+    auto const& page_rules = rules.at(page);
+    for (auto page_before : update | sv::take(idx)) {
       if (!sr::contains(page_rules, page_before)) {
         return false;
       }
@@ -64,12 +58,9 @@ auto is_correct_order(update_t const& update, rules_t const& rules) -> bool {
   return true;
 };
 
-auto sort_pages(update_t update, rules_t const& rules) {
+auto sort_pages(update_t update, rules_t& rules) {
   sr::sort(update, [&rules](auto lhs, auto rhs) {
-    if (!rules.contains(rhs)) {
-      return false;
-    }
-    return sr::contains(rules.at(rhs), lhs);
+    return sr::contains(rules[rhs], lhs);
   });
   return update;
 }
@@ -79,13 +70,13 @@ void part1(std::vector<update_t> const& updates, rules_t const& rules) {
                     .filter([&rules](auto update) {
                       return is_correct_order(update, rules);
                     })
-                    .map([](auto update) { return get_middle_page(update); })
+                    .map([](auto update) { return update[update.size() / 2]; })
                     .sum();
 
   println("{}", result);
 }
 
-void part2(std::vector<update_t> const& updates, rules_t const& rules) {
+void part2(std::vector<update_t> const& updates, rules_t& rules) {
   auto result = flux::ref(updates)
                     .filter([&rules](auto update) {
                       return !is_correct_order(update, rules);
@@ -93,7 +84,7 @@ void part2(std::vector<update_t> const& updates, rules_t const& rules) {
                     .map([&rules](auto update) {
                       return sort_pages(std::move(update), rules);
                     })
-                    .map([](auto update) { return get_middle_page(update); })
+                    .map([](auto update) { return update[update.size() / 2]; })
                     .sum();
 
   println("{}", result);
@@ -113,12 +104,10 @@ int main() {
         reading_rules = false;
         continue;
       }
-
       auto rule = flux::split_string(std::string_view{line}, "|"sv)
                       .map([](auto s) { return std::stoi(std::string(s)); })
                       .to<std::vector>();
       rules[rule[1]].push_back(rule[0]);
-
     } else {
       auto update = flux::split_string(std::string_view{line}, ","sv)
                         .map([](auto s) { return std::stoi(std::string(s)); })
