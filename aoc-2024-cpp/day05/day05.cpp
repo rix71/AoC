@@ -24,6 +24,16 @@ namespace fs = std::filesystem;
 using fmt::print;
 using fmt::println;
 
+#define MEASURE(f)                                                             \
+  {                                                                            \
+    auto start = std::chrono::high_resolution_clock::now();                    \
+    f;                                                                         \
+    auto end = std::chrono::high_resolution_clock::now();                      \
+    println("{} took {} µs", #f,                                               \
+            std::chrono::duration_cast<std::chrono::microseconds>(end - start) \
+                .count());                                                     \
+  }
+
 using update_t = std::vector<int>;
 using rules_t = std::map<int, std::vector<int>>;
 
@@ -116,6 +126,6 @@ int main() {
     }
   }
 
-  part1(updates, rules);
-  part2(updates, rules);
+  MEASURE(part1(updates, rules))
+  MEASURE(part2(updates, rules))
 }

@@ -22,6 +22,16 @@ namespace sr = std::ranges;
 namespace sv = std::views;
 namespace fs = std::filesystem;
 
+#define MEASURE(f)                                                             \
+  {                                                                            \
+    auto start = std::chrono::high_resolution_clock::now();                    \
+    f;                                                                         \
+    auto end = std::chrono::high_resolution_clock::now();                      \
+    println("{} took {} µs", #f,                                               \
+            std::chrono::duration_cast<std::chrono::microseconds>(end - start) \
+                .count());                                                     \
+  }
+
 using fmt::print;
 using fmt::println;
 
@@ -261,6 +271,6 @@ int main() {
   using namespace std::literals;
   auto lines = read_input("day06/in.txt");
   // println("{}", lines);
-  part1(lines);
+  MEASURE(part1(lines))
   // part2(lines);  // not working
 }

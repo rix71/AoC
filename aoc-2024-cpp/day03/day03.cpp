@@ -19,6 +19,16 @@ namespace fs = std::filesystem;
 using fmt::print;
 using fmt::println;
 
+#define MEASURE(f)                                                             \
+  {                                                                            \
+    auto start = std::chrono::high_resolution_clock::now();                    \
+    f;                                                                         \
+    auto end = std::chrono::high_resolution_clock::now();                      \
+    println("{} took {} µs", #f,                                               \
+            std::chrono::duration_cast<std::chrono::microseconds>(end - start) \
+                .count());                                                     \
+  }
+
 auto read_input(fs::path const& file_name) -> std::vector<std::string> {
   std::fstream infile(fs::path{BASE_PATH} / file_name);
   std::vector<std::string> lines;
@@ -82,6 +92,6 @@ int main() {
   auto flattened = lines | sv::join | sv::common;
   std::string memory(flattened.begin(), flattened.end());
 
-  part1(memory);
-  part2(memory);
+  MEASURE(part1(memory))
+  MEASURE(part2(memory))
 }
