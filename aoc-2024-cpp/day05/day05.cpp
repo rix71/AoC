@@ -50,7 +50,7 @@ auto read_input(fs::path const& file_name) -> std::vector<std::string> {
 }
 
 auto is_correct_order(update_t const& update, rules_t const& rules) -> bool {
-  for (auto [idx, page] : update | sv::enumerate) {
+  for (auto [idx, page] : sv::zip(sv::iota(0), update)) {
     if (!rules.contains(page)) {
       if (idx != 0) {
         return false;

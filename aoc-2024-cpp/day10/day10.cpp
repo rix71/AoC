@@ -71,7 +71,7 @@ void part1(std::vector<std::vector<int>> const& topo) {
       for (auto [dr, dc] : directions) {
         auto nr = tr + dr;
         auto nc = tc + dc;
-        if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) {
+        if (nr < 0 || nr >= (int)rows || nc < 0 || nc >= (int)cols) {
           continue;
         }
         if (trail_val == 8 && topo[nr][nc] == 9) {
@@ -115,7 +115,7 @@ void part2(std::vector<std::vector<int>> const& topo) {
       for (auto [dr, dc] : directions) {
         auto nr = tr + dr;
         auto nc = tc + dc;
-        if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) {
+        if (nr < 0 || nr >= (int)rows || nc < 0 || nc >= (int)cols) {
           continue;
         }
         if (trail_val == 8 && topo[nr][nc] == 9) {

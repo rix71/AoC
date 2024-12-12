@@ -1,10 +1,8 @@
-#include <fmt/base.h>
 #include <algorithm>
 #include <array>
 #include <chrono>
 #include <cstddef>
 #include <filesystem>
-#include <flux/op/inplace_reverse.hpp>
 #include <fstream>
 #include <iterator>
 #include <map>
@@ -15,8 +13,10 @@
 #include <string_view>
 #include <vector>
 
+#include <fmt/base.h>
 #include <fmt/ranges.h>
 #include <flux.hpp>
+#include <flux/op/inplace_reverse.hpp>
 
 namespace sr = std::ranges;
 namespace sv = std::views;
@@ -207,7 +207,7 @@ void part2(std::vector<std::string> const& grid) {
     for (std::size_t obs_dir_idx = 0; obs_dir_idx < directions.size();
          ++obs_dir_idx) {
       auto current_dir_idx = obs_dir_idx;
-      println("Checking direction: {} -> ", directions[current_dir_idx]);
+      fmt::println("Checking direction: {} -> ", directions[current_dir_idx]);
       auto i = oi + directions[current_dir_idx].second;
       auto j = oj - directions[current_dir_idx].first;
       const int here_i = i;
@@ -217,7 +217,7 @@ void part2(std::vector<std::string> const& grid) {
       }
       auto prev_dir_idx = (current_dir_idx + 3) % 4;
       if (!sr::contains(came_from[i][j], prev_dir_idx)) {
-        println("({}, {}) -> not possible from {}", i, j,
+        fmt::println("({}, {}) -> not possible from {}", i, j,
                 directions[obs_dir_idx]);
         continue;
       }
@@ -244,7 +244,7 @@ void part2(std::vector<std::string> const& grid) {
         }
       }
       if (here_again) {
-        println("({}, {}) -> possible from {}, starting pos: ({}, {})", oi, oj,
+        fmt::println("({}, {}) -> possible from {}, starting pos: ({}, {})", oi, oj,
                 directions[obs_dir_idx], here_i, here_j);
         possible_loops++;
       }

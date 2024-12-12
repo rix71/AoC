@@ -26,6 +26,7 @@ add_executable(day06 day06/day06.cpp)
 add_executable(day09 day09/day09.cpp)
 add_executable(day10 day10/day10.cpp)
 add_executable(day11 day11/day11.cpp)
+add_executable(day12 day12/day12.cpp)
 
 # ----------------------------------------
 execute_process(

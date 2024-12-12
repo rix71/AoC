@@ -74,7 +74,7 @@ void part1(std::string const& disk_map) {
   extended_map.erase(ret.begin(), ret.end());
 
   std::size_t checksum = 0;
-  for (auto [i, x] : sv::enumerate(extended_map)) {
+  for (auto [i, x] : sv::zip(sv::iota(0), extended_map)) {
     checksum += i * x;
   }
 
@@ -116,7 +116,7 @@ void part2(std::string const& disk_map) {
                               });
         it != slot_info.end()) {
       auto [slot_size, slot_idx] = *it;
-      for (int i = 0; i < file_size; ++i) {
+      for (std::size_t i = 0; i < file_size; ++i) {
         sr::iter_swap(extended_map.begin() + file_idx + i,
                       extended_map.begin() + slot_idx + i);
       }
@@ -126,7 +126,7 @@ void part2(std::string const& disk_map) {
     file_id--;
   }
   std::size_t checksum = 0;
-  for (auto [i, x] : sv::enumerate(extended_map)) {
+  for (auto [i, x] : sv::zip(sv::iota(0), extended_map)) {
     if (x >= 0) {
       checksum += i * x;
     }
@@ -138,7 +138,7 @@ int main() {
   using namespace std::literals;
   auto lines = read_input("day09/in.txt");
   auto disk_map = lines[0];
-  println("{}", disk_map);
+  fmt::println("{}", disk_map);
   MEASURE(part1(disk_map))
   MEASURE(part2(disk_map))
 }

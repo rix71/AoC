@@ -102,7 +102,7 @@ int main() {
           .map([](auto const& s) { return std::stoul(std::string(s)); })
           .to<std::vector>();
 
-  println("{}", stones);
+  fmt::println("{}", stones);
   
   MEASURE(part1(stones))
   MEASURE(part2(stones))
