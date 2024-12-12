@@ -135,76 +135,52 @@ auto find_region_area_and_perimeter(
   return std::make_pair(area, perimeter);
 }
 
-auto find_region_area_and_edges(
+auto find_region_area_and_sides(
     std::map<std::size_t, std::vector<std::pair<int, int>>> patches) {
   auto area =
       sr::fold_left(patches | sv::values |
                         sv::transform([](auto const& v) { return v.size(); }),
                     0UL, std::plus{});
 
-  // auto vertical_edges = 2UL;
-  // auto horizontal_edges = 2UL;
   for (auto& [_, patch_row] : patches) {
     sr::sort(patch_row,
              [](auto const& a, auto const& b) { return a.second < b.second; });
   }
 
-  auto left = patches.begin()->second.front();
-  auto right = patches.begin()->second.back();
-  auto edges = 4UL;
-  for (auto& [_, patch_row] : patches | sv::drop(1)) {
-    auto left_next = patch_row.front();
-    auto right_next = patch_row.back();
-    if (left_next.second != left.second) {
-      edges += 2;
-    }
-    if (right_next.second != right.second) {
-      edges += 2;
-    }
+  auto edges = std::set<std::pair<std::pair<int, int>, std::pair<int, int>>>{};
 
-    left = left_next;
-    right = right_next;
-  }
-  auto holes = std::set<std::pair<int, int>>{};
-  auto bays = std::set<std::pair<int, int>>{};
   for (auto& [_, patch_row] : patches) {
-    flux::for_each(
-        flux::ref(patch_row).pairwise(),
-        flux::unpack([&holes, &bays, &patches](auto const& a, auto const& b) {
-          if (std::abs(a.second - b.second) > 1) {
-            auto hole = std::pair{a.first, a.second + 1};
-            int dd = 0;
-            bool new_hole = true;
-            for (auto [dr, dc] : directions) {
-              for (auto i : sv::iota(0, (int)patches.size())) {
-                auto nr = hole.first + dr * i;
-                auto nc = hole.second + dc * i;
-                if (holes.contains(std::pair{nr, nc})) {
-                  new_hole = false;
-                }
-                if (patches.contains(nr) &&
-                    sr::contains(patches[nr], std::pair{nr, nc})) {
-                  dd++;
-                  break;
-                }
-              }
-            }
-            if (dd >= 4) {
-              if (new_hole) {
-                println("Found hole at ({}, {})", hole.first, hole.second);
-                holes.insert(hole);
-              }
-            } else {
-              println("Found bay at ({}, {})", hole.first, hole.second);
-              bays.insert(hole);
-            }
-          }
-        }));
+    for (auto& [r, c] : patch_row) {
+      for (auto [dr, dc] : directions) {
+        auto nr = r + dr;
+        auto nc = c + dc;
+        if (patches.contains(nr) &&
+            sr::contains(patches[nr], std::pair{nr, nc})) {
+          continue;
+        }
+        edges.insert({{r, c}, {nr, nc}});
+      }
+    }
   }
-  edges += 4 * holes.size();
-  edges += 2 * bays.size();
 
-  return std::make_pair(area, edges);
+  auto sides = std::set<std::pair<std::pair<int, int>, std::pair<int, int>>>{};
+  for (auto [p1, p2] : edges) {
+    bool keep = true;
+    for (auto [dr, dc] : std::vector<std::pair<int, int>>{{{1, 0}, {0, 1}}}) {
+      auto p1n = std::pair{p1.first + dr, p1.second + dc};
+      auto p2n = std::pair{p2.first + dr, p2.second + dc};
+      if (edges.contains({p1n, p2n})) {
+        keep = false;
+      }
+    }
+    if (keep) {
+      sides.insert({p1, p2});
+    }
+  }
+
+  auto num_sides = sides.size();
+
+  return std::make_pair(area, num_sides);
 }
 
 std::uint64_t part1(std::vector<std::vector<char>> const& garden) {
@@ -221,9 +197,6 @@ std::uint64_t part1(std::vector<std::vector<char>> const& garden) {
         visited[r][c] = true;
         auto [region_area, region_perimeter] = find_region_area_and_perimeter(
             get_patches(garden[r][c], r, c, garden, visited));
-        // println("Region {} ({}, {}) area: {}, perimeter {}", garden[r][c], r,
-        // c,
-        //         region_area, region_perimeter);
         total_cost += region_area * region_perimeter;
       }
     }
@@ -244,10 +217,9 @@ std::uint64_t part2(std::vector<std::vector<char>> const& garden) {
     for (auto c : sv::iota(0UL, cols)) {
       if (!visited[r][c]) {
         visited[r][c] = true;
-        auto [region_area, region_edges] = find_region_area_and_edges(
+        auto [region_area, region_edges] = find_region_area_and_sides(
             get_patches(garden[r][c], r, c, garden, visited));
-        println("Region {} ({}, {}) area: {}, edges {}", garden[r][c], r, c,
-                region_area, region_edges);
+
         total_cost += region_area * region_edges;
       }
     }
@@ -275,53 +247,57 @@ void test1() {
                   return line | sr::to<std::vector>();
                 }) |
                 sr::to<std::vector>();
-  fmt::println("Test 1 garden:\n{}", garden);
+  // fmt::println("Test 1 garden:\n{}", garden);
   auto res1 = part1(garden);
   assert_eq(res1, 140);
   auto res2 = part2(garden);
   assert_eq(res2, 80);
 }
+
 void test2() {
   auto lines = read_input("day12/test2.txt");
   auto garden = lines | sv::transform([](auto const& line) {
                   return line | sr::to<std::vector>();
                 }) |
                 sr::to<std::vector>();
-  fmt::println("Test 2 garden:\n{}", garden);
+  // fmt::println("Test 2 garden:\n{}", garden);
   auto res1 = part1(garden);
   assert_eq(res1, 772);
   auto res2 = part2(garden);
   assert_eq(res2, 436);
 }
+
 void test3() {
   auto lines = read_input("day12/test3.txt");
   auto garden = lines | sv::transform([](auto const& line) {
                   return line | sr::to<std::vector>();
                 }) |
                 sr::to<std::vector>();
-  fmt::println("Test 3 garden:\n{}", garden);
+  // fmt::println("Test 3 garden:\n{}", garden);
   auto res1 = part1(garden);
   assert_eq(res1, 1930);
   auto res2 = part2(garden);
   assert_eq(res2, 1206);
 }
+
 void test4() {
   auto lines = read_input("day12/test4.txt");
   auto garden = lines | sv::transform([](auto const& line) {
                   return line | sr::to<std::vector>();
                 }) |
                 sr::to<std::vector>();
-  fmt::println("Test 4 garden:\n{}", garden);
+  // fmt::println("Test 4 garden:\n{}", garden);
   auto res2 = part2(garden);
   assert_eq(res2, 236);
 }
+
 void test5() {
   auto lines = read_input("day12/test5.txt");
   auto garden = lines | sv::transform([](auto const& line) {
                   return line | sr::to<std::vector>();
                 }) |
                 sr::to<std::vector>();
-  fmt::println("Test 5 garden:\n{}", garden);
+  // fmt::println("Test 5 garden:\n{}", garden);
   auto res2 = part2(garden);
   assert_eq(res2, 368);
 }
@@ -342,9 +318,9 @@ int main() {
                 }) |
                 sr::to<std::vector>();
 
-  fmt::println("{}", garden);
+  // fmt::println("{}", garden);
 
   MEASURE(part1(garden))
-  MEASURE(part2(garden))  // Not working
+  MEASURE(part2(garden))
 #endif
 }
