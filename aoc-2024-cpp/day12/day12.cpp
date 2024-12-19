@@ -21,6 +21,7 @@
 #include <fmt/base.h>
 #include <fmt/color.h>
 #include <fmt/ranges.h>
+#include <gtest/gtest.h>
 #include <flux.hpp>
 
 namespace sr = std::ranges;
@@ -228,90 +229,103 @@ std::uint64_t part2(std::vector<std::vector<char>> const& garden) {
   return total_cost;
 }
 
-#define assert_eq(a, b)                                                       \
-  {                                                                           \
-    bool success = (a == b);                                                  \
-    if (!success) {                                                           \
-      fmt::print(fg(fmt::color::red), "Assertion failed: {} != {} ({}:{})\n", \
-                 a, b, __FUNCTION__, __LINE__);                               \
-    } else {                                                                  \
-      fmt::print(fg(fmt::color::green),                                       \
-                 "Assertion passed: {} == {} ({}:{})\n", a, b, __FUNCTION__,  \
-                 __LINE__);                                                   \
-    }                                                                         \
-  }
-
-void test1() {
+TEST(Case1, Part1) {
   auto lines = read_input("day12/test1.txt");
   auto garden = lines | sv::transform([](auto const& line) {
                   return line | sr::to<std::vector>();
                 }) |
                 sr::to<std::vector>();
   // fmt::println("Test 1 garden:\n{}", garden);
-  auto res1 = part1(garden);
-  assert_eq(res1, 140);
-  auto res2 = part2(garden);
-  assert_eq(res2, 80);
+  auto res = part1(garden);
+  EXPECT_EQ(res, 140);
 }
 
-void test2() {
+TEST(Case1, Part2) {
+  auto lines = read_input("day12/test1.txt");
+  auto garden = lines | sv::transform([](auto const& line) {
+                  return line | sr::to<std::vector>();
+                }) |
+                sr::to<std::vector>();
+  auto res = part2(garden);
+  EXPECT_EQ(res, 80);
+}
+
+TEST(Case2, Part1) {
   auto lines = read_input("day12/test2.txt");
   auto garden = lines | sv::transform([](auto const& line) {
                   return line | sr::to<std::vector>();
                 }) |
                 sr::to<std::vector>();
   // fmt::println("Test 2 garden:\n{}", garden);
-  auto res1 = part1(garden);
-  assert_eq(res1, 772);
-  auto res2 = part2(garden);
-  assert_eq(res2, 436);
+  auto res = part1(garden);
+  EXPECT_EQ(res, 772);
 }
 
-void test3() {
+TEST(Case2, Part2) {
+  auto lines = read_input("day12/test2.txt");
+  auto garden = lines | sv::transform([](auto const& line) {
+                  return line | sr::to<std::vector>();
+                }) |
+                sr::to<std::vector>();
+  // fmt::println("Test 2 garden:\n{}", garden);
+  auto res = part2(garden);
+  EXPECT_EQ(res, 436);
+}
+
+TEST(Case3, Part1) {
   auto lines = read_input("day12/test3.txt");
   auto garden = lines | sv::transform([](auto const& line) {
                   return line | sr::to<std::vector>();
                 }) |
                 sr::to<std::vector>();
   // fmt::println("Test 3 garden:\n{}", garden);
-  auto res1 = part1(garden);
-  assert_eq(res1, 1930);
-  auto res2 = part2(garden);
-  assert_eq(res2, 1206);
+  auto res = part1(garden);
+  EXPECT_EQ(res, 1930);
 }
 
-void test4() {
+TEST(Case3, Part2) {
+  auto lines = read_input("day12/test3.txt");
+  auto garden = lines | sv::transform([](auto const& line) {
+                  return line | sr::to<std::vector>();
+                }) |
+                sr::to<std::vector>();
+  // fmt::println("Test 3 garden:\n{}", garden);
+  auto res = part2(garden);
+  EXPECT_EQ(res, 1206);
+}
+
+TEST(Case4, Part2) {
   auto lines = read_input("day12/test4.txt");
   auto garden = lines | sv::transform([](auto const& line) {
                   return line | sr::to<std::vector>();
                 }) |
                 sr::to<std::vector>();
   // fmt::println("Test 4 garden:\n{}", garden);
-  auto res2 = part2(garden);
-  assert_eq(res2, 236);
+  auto res = part2(garden);
+  EXPECT_EQ(res, 236);
 }
 
-void test5() {
+TEST(Case5, Part2) {
   auto lines = read_input("day12/test5.txt");
   auto garden = lines | sv::transform([](auto const& line) {
                   return line | sr::to<std::vector>();
                 }) |
                 sr::to<std::vector>();
   // fmt::println("Test 5 garden:\n{}", garden);
-  auto res2 = part2(garden);
-  assert_eq(res2, 368);
+  auto res = part2(garden);
+  EXPECT_EQ(res, 368);
 }
 
-int main() {
-#if 0
-  test1();
-  test2();
-  test3();
-  test4();
-  test5();
-
-#else
+int main(int argc, char** argv) {
   using namespace std::literals;
+
+  testing::InitGoogleTest(&argc, argv);
+
+  if (RUN_ALL_TESTS()) {
+    println("Some tests failed\n");
+    std::abort();
+  }
+
   auto lines = read_input("day12/in.txt");
   auto garden = lines | sv::transform([](auto const& line) {
                   return line | sr::to<std::vector>();
@@ -322,5 +336,4 @@ int main() {
 
   MEASURE(part1(garden))
   MEASURE(part2(garden))
-#endif
 }

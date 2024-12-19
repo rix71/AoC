@@ -10,9 +10,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(fmt REQUIRED)
 find_package(flux REQUIRED)
+find_package(GTest REQUIRED)
 
 # Link to all
-link_libraries(fmt::fmt flux::flux)
+link_libraries(fmt::fmt flux::flux gtest::gtest)
 
 add_compile_options(-DBASE_PATH="${CMAKE_SOURCE_DIR}")
 
