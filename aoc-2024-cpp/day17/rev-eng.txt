@@ -1,0 +1,33 @@
+Program: 0,3,5,4,3,0
+
+0,3 | adv 3 | A = A >> 3
+5,4 | out 4 | out(A % 8)
+3,0 | jnz 0 | A != 0 ? goto 0 : halt
+
+while (A != 0) {
+    A = A >> 3;
+    output.push_back(A % 8);
+}
+
+---
+
+Program: 2,4,1,5,7,5,1,6,4,3,5,5,0,3,3,0
+
+2,4 | bst 4 | B = A % 8
+1,5 | bxl 5 | B = B ^ 5
+7,5 | cdv 5 | C = A >> B
+1,6 | bxl 6 | B = B ^ 6
+4,3 | bxc _ | B = B ^ C
+5,5 | out 5 | out(B % 8)
+0,3 | adv 3 | A = A >> 3
+3,0 | jnz 0 | A != 0 ? goto 0 : halt
+
+while (A != 0) {
+    B = A % 8;
+    B = B ^ 5;
+    C = A >> B;
+    B = B ^ 6;
+    B = B ^ C;
+    output.push_back(B % 8);
+    A = A >> 3;
+}
