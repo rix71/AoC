@@ -3,8 +3,6 @@
 #include <chrono>
 #include <cstddef>
 #include <filesystem>
-#include <flux/source/iota.hpp>
-#include <flux/source/range.hpp>
 #include <fstream>
 #include <map>
 #include <optional>
@@ -12,11 +10,15 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <tuple>
+#include <unordered_set>
 #include <vector>
 
 #include <fmt/base.h>
 #include <fmt/ranges.h>
-#include <gtest/gtest.h>
+#include <boost/functional/hash.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 #include <flux.hpp>
 
 namespace sr = std::ranges;
@@ -48,17 +50,19 @@ auto read_input(fs::path const& file_name) -> std::vector<std::string> {
   return lines;
 }
 
-auto sequence(std::int64_t n) -> std::int64_t {
-  n = ((n << 6) ^ n) % 16777216;
-  n = ((n >> 5) ^ n) % 16777216;
-  n = ((n << 11) ^ n) % 16777216;
+[[nodiscard]]
+constexpr auto sequence(std::int64_t n) -> std::int64_t {
+  constexpr auto mod = 16777216;
+  n = ((n << 6) ^ n) & (mod - 1);
+  n = ((n >> 5) ^ n) & (mod - 1);
+  n = ((n << 11) ^ n) & (mod - 1);
   return n;
 }
 
 auto part1(std::vector<std::int64_t> const& initial) -> std::int64_t {
   std::int64_t ans{0};
   for (auto n : initial) {
-    flux::iota(0, 2000).for_each([&n](auto) { n = sequence(n); });
+    flux::for_each(flux::iota(0, 2000), [&n](auto) { n = sequence(n); });
     ans += n;
   }
   println("{}", ans);
@@ -69,14 +73,14 @@ auto part2(std::vector<std::int64_t> const& initial) -> std::int64_t {
   using change_seq_t =
       std::tuple<std::int64_t, std::int64_t, std::int64_t, std::int64_t>;
 
-  auto total_bananas = std::map<change_seq_t, std::int64_t>{};
+  auto total_bananas = boost::unordered_map<change_seq_t, std::int64_t>{};
 
   for (auto n : initial) {
     auto seq = std::vector<std::int64_t>{};
     auto changes = std::vector<std::int64_t>{};
     seq.reserve(2001);
     changes.reserve(2000);
-    flux::iota(0, 2000).for_each([&](auto) {
+    flux::for_each(flux::iota(0, 2000), [&seq, &n, &changes](auto) {
       seq.push_back(n);
       auto new_n = sequence(n);
       changes.push_back((new_n % 10) - (n % 10));
@@ -84,8 +88,8 @@ auto part2(std::vector<std::int64_t> const& initial) -> std::int64_t {
     });
     seq.push_back(n);
 
-    auto seen = std::set<change_seq_t>{};
-    for (auto i : flux::iota(0, 2000 - 3)) {
+    auto seen = boost::unordered_set<change_seq_t>{};
+    for (auto i : flux::iota(0, 1997)) {
       auto chsub = std::tuple{changes[i], changes[i + 1], changes[i + 2],
                               changes[i + 3]};
       if (!seen.contains(chsub)) {
@@ -98,8 +102,6 @@ auto part2(std::vector<std::int64_t> const& initial) -> std::int64_t {
   println("{}", res);
   return res;
 }
-
-
 
 int main() {
   using namespace std::literals;
