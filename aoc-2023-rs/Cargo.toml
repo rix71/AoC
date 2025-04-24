@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "day*",
+    "day01",
+]
+default-members = ["day*"]
+resolver = "2"
+
+[workspace.dependencies]
