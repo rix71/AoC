@@ -1,0 +1,9 @@
+[project]
+name = "aoc-2024-py"
+version = "0.1.0"
+description = "Advent of code 2024"
+requires-python = ">=3.13"
+dependencies = [
+    "numpy>=2.3.3",
+    "scipy>=1.16.2",
+]
