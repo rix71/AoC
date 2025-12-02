@@ -4,3 +4,6 @@
 */.vscode
 */.cache
 */compile_commands.json
+
+aoc-2025-rs/day*/input.txt
+aoc-2025-rs/day*/test.txt
