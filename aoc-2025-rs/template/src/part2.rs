@@ -8,6 +8,7 @@ mod tests {
 
     #[test]
     fn test_part2() {
-        todo!("No tests implemented yet");
+        let input = include_str!("../test.txt");
+        assert_eq!(solve(input), "Expected output");
     }
 }

@@ -6,6 +6,7 @@ default-members = ["day*"]
 resolver = "2"
 
 [workspace.dependencies]
+cached = "0.56.0"
+glam = "0.30.9"
 itertools = "0.14.0"
 ndarray = "0.17.1"
-cached = "0.56.0"
