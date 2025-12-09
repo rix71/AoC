@@ -16,16 +16,11 @@ pub fn solve(input: &str) -> u64 {
             let dx = (p[0].x.max(p[1].x) - p[0].x.min(p[1].x)) + 1;
             let dy = (p[0].y.max(p[1].y) - p[0].y.min(p[1].y)) + 1;
             let area = dx * dy;
-            println!(
-                "Points: {:?}, {:?} => Area: {} x {} = {}",
-                p[0], p[1], dx, dy, area
-            );
             assert!(area > 0);
             area
         })
         .max()
         .unwrap();
-    // .collect::<Vec<_>>();
 
     max_area
 }
